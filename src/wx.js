@@ -7,6 +7,40 @@ window.weixin = {
         user: null,
         repeated: false,
     },
+    init() {
+        this.login();
+        wx.showShareMenu();
+        wx.onShareAppMessage(() => {
+            return {
+                title: '一起来，画一画',
+                imageUrl: 'assets/images/shareImage.jpg',
+            }
+        });
+    },
+    login() {
+        AV.User.loginWithWeapp().then(user => {
+            this.data.user = user.toJSON();
+            this.getUserInfo();
+        }).catch(console.error);
+    },
+    getUserInfo() {
+        const user = AV.User.current();
+        wx.getUserInfo({
+            success: ({userInfo}) => {
+              // 更新当前用户的信息
+                user.set(userInfo).save().then(user => {
+                    // 成功，此时可在控制台中看到更新后的用户信息
+                    this.data.user = user.toJSON();
+                }).catch(console.error);
+            }
+        });
+    },
+    share() {
+        wx.shareAppMessage({
+            title: '一起来，画一画',
+            imageUrl: 'assets/images/shareImage.jpg',
+        });
+    },
     getLevelData(level) {
         try {
             var file = level === 0 ? 'src/data/level.0.json' : wx.env.USER_DATA_PATH + '/levels/' + level + '.json';
@@ -35,24 +69,6 @@ window.weixin = {
             return null;
         }
     },
-    login() {
-        AV.User.loginWithWeapp().then(user => {
-            this.data.user = user.toJSON();
-            this.getUserInfo();
-        }).catch(console.error);
-    },
-    getUserInfo() {
-        const user = AV.User.current();
-        wx.getUserInfo({
-            success: ({userInfo}) => {
-              // 更新当前用户的信息
-                user.set(userInfo).save().then(user => {
-                    // 成功，此时可在控制台中看到更新后的用户信息
-                    this.data.user = user.toJSON();
-                }).catch(console.error);
-            }
-        });
-    },
     getGameInfo() {
         try {
             var data = wx.getFileSystemManager().readFileSync(wx.env.USER_DATA_PATH + '/game.json', 'utf-8');
@@ -76,7 +92,7 @@ window.weixin = {
         });
     },
     downloadLevel(level, cb) {
-        var url = this.DOMAIN + '/levels/' + level + '.json';
+        var url = this.DOMAIN + '/levels/' + level + '.json?v=' + Math.random();
         var dir = wx.env.USER_DATA_PATH + '/levels/';
         try {
             wx.getFileSystemManager().accessSync(dir);

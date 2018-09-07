@@ -1,0 +1,1 @@
+import PIXI from './pixi-wx.js'; import Phaser from './phaser-wx-main.js'; Phaser.XTexture = function(xCanvas, x, y, w, h){ return new PIXI.Texture(new PIXI.BaseTexture(xCanvas), new PIXI.Rectangle(x, y, w, h)); };

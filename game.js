@@ -9,4 +9,5 @@ window.AV.init({
     appKey: 'miNxbLGpIDquaDyrf1zCUTfv',
 });
 wx.originContext = canvas.getContext('2d');
+require("./libs/aldwx/ald-game");
 require("./src/game.min");

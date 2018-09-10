@@ -43,12 +43,8 @@ window.weixin = {
                 this.resumeGame();
             }
         });
-        wx.onShow(res => {
-            console.log(res);
-        });
     },
     share(cb) {
-        cb();return;
         wx.aldShareAppMessage({
             title: '一起来，画一画',
             imageUrl: 'assets/images/shareImage.jpg',
